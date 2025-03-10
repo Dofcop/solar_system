@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Solar System Model</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #050505;
+            font-family: Arial, sans-serif;
+        }
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .info-box {
+            position: absolute;
+            top: 120px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 300px;
+            display: none;
+        }
+        svg {
+            cursor: grab; /* Indicates that the SVG is interactive */
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        Speed: <input type="range" id="speedControl" min="0.1" max="5" step="0.1" value="1">
+        <button onclick="changeSpeed(0.5)">-</button>
+        <button onclick="changeSpeed(1.5)">+</button>
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+    </div>
+
+    <svg id="solarSystem" viewBox="-600 -300 1200 600">
+        <!-- Wrap all zoomable content in a group -->
+        <g id="zoomGroup">
+            <!-- Sun -->
+            <g id="sun">
+                <circle cx="0" cy="0" r="30" fill="#ffd700" filter="url(#glow)"/>
+            </g>
+
+            <!-- Orbits -->
+            <ellipse id="earthOrbit" rx="150" ry="70" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="marsOrbit" rx="220" ry="100" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="jupiterOrbit" rx="350" ry="180" fill="none" stroke="#444" stroke-width="0.5"/>
+
+            <!-- Asteroid Belt -->
+            <g id="asteroidBelt">
+                <path d="M-280,0A280,140 0 1 1 280,0" fill="none" stroke="rgba(150,150,150,0.3)" stroke-width="3"/>
+                <g id="asteroidsGroup" style="transform-origin: center">
+                    <!-- Dynamically generated asteroids -->
+                </g>
+            </g>
+
+            <!-- Planets -->
+            <g id="earth" class="planet" data-info="Mass: 5.97 × 10²⁴ kg<br>Circumference: 40,075 km<br>Composition: Nitrogen, Oxygen">
+                <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/240px-The_Earth_seen_from_Apollo_17.jpg" x="-10" y="-10" width="20" height="20"/>
+            </g>
+            <g id="mars" class="planet" data-info="Mass: 6.39 × 10²³ kg<br>Circumference: 21,344 km<br>Composition: CO₂, Argon">
+                <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/240px-OSIRIS_Mars_true_color.jpg" x="-8" y="-8" width="16" height="16"/>
+            </g>
+            <g id="jupiter" class="planet" data-info="Mass: 1.898 × 10²⁷ kg<br>Circumference: 439,264 km<br>Composition: Hydrogen, Helium">
+                <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/240px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg" x="-20" y="-20" width="40" height="40"/>
+            </g>
+        </g>
+
+        <!-- Glow filter for Sun -->
+        <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </svg>
+
+    <div id="infoBox" class="info-box"></div>
+
+    <script>
+        const planets = {
+            earth: {
+                orbit: 150,
+                speed: 11.87,
+                angle: 0,
+                rotation: 0
+            },
+            mars: {
+                orbit: 220,
+                speed: 8.03,
+                angle: 180,
+                rotation: 0
+            },
+            jupiter: {
+                orbit: 350,
+                speed: 1,
+                angle: 90,
+                rotation: 0
+            }
+        };
+
+        let speedMultiplier = 1;
+        const infoBox = document.getElementById('infoBox');
+        const zoomGroup = document.getElementById('zoomGroup');
+
+        // Zoom variables
+        let zoomLevel = 1; // Initial zoom level
+        const zoomStep = 0.1; // Amount to zoom in/out per step
+
+        // Event listeners for planets
+        document.querySelectorAll('.planet').forEach(planet => {
+            planet.addEventListener('click', () => {
+                infoBox.innerHTML = planet.dataset.info;
+                infoBox.style.display = 'block';
+            });
+        });
+
+        // Speed control
+        document.getElementById('speedControl').addEventListener('input', (e) => {
+            speedMultiplier = parseFloat(e.target.value);
+        });
+
+        function changeSpeed(factor) {
+            speedMultiplier *= factor;
+            document.getElementById('speedControl').value = speedMultiplier;
+        }
+
+        // Zoom functions
+        function zoomIn() {
+            zoomLevel += zoomStep;
+            applyZoom();
+        }
+
+        function zoomOut() {
+            if (zoomLevel > zoomStep) { // Prevent zooming out too far
+                zoomLevel -= zoomStep;
+                applyZoom();
+            }
+        }
+
+        function applyZoom() {
+            zoomGroup.setAttribute('transform', `scale(${zoomLevel})`);
+        }
+
+        // Function to generate and animate asteroids
+        const asteroidCount = 50; // Number of asteroids
+        const asteroidBeltRadiusX = 280; // X-axis radius of the ellipse
+        const asteroidBeltRadiusY = 140; // Y-axis radius of the ellipse
+        const asteroidsGroup = document.getElementById('asteroidsGroup');
+
+        // Generate asteroids
+        for (let i = 0; i < asteroidCount; i++) {
+            const asteroid = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            asteroid.setAttribute('r', Math.random() * 1.5 + 0.5); // Random size between 0.5 and 2
+            asteroid.setAttribute('fill', '#888'); // Gray color
+            asteroid.setAttribute('opacity', Math.random() * 0.4 + 0.2); // Random opacity between 0.2 and 0.6
+            asteroid.setAttribute('data-angle', Math.random() * 360); // Random starting angle
+            asteroid.setAttribute('data-speed', Math.random() * 0.5 + 0.1); // Random speed between 0.1 and 0.6
+            asteroidsGroup.appendChild(asteroid);
+        }
+
+        // Animate asteroids
+        function animateAsteroids() {
+            Array.from(asteroidsGroup.children).forEach(asteroid => {
+                let angle = parseFloat(asteroid.getAttribute('data-angle'));
+                const speed = parseFloat(asteroid.getAttribute('data-speed'));
+
+                // Update angle
+                angle = (angle + speed * speedMultiplier) % 360;
+                asteroid.setAttribute('data-angle', angle);
+
+                // Calculate position on ellipse
+                const rad = angle * Math.PI / 180;
+                const x = Math.cos(rad) * asteroidBeltRadiusX;
+                const y = Math.sin(rad) * asteroidBeltRadiusY;
+
+                // Update position
+                asteroid.setAttribute('cx', x);
+                asteroid.setAttribute('cy', y);
+            });
+
+            requestAnimationFrame(animateAsteroids);
+        }
+
+        // Animate planets
+        function animatePlanets() {
+            Object.entries(planets).forEach(([name, data]) => {
+                const planet = document.getElementById(name);
+                // Orbital motion
+                data.angle = (data.angle - (data.speed * speedMultiplier)) % 360;
+                const rad = data.angle * Math.PI / 180;
+                const x = Math.cos(rad) * data.orbit;
+                const y = Math.sin(rad) * (data.orbit * 0.5); // Elliptical adjustment
+
+                // Axial rotation
+                data.rotation = (data.rotation + (data.speed * 0.1)) % 360;
+
+                planet.setAttribute('transform',
+                    `translate(${x},${y}) rotate(${data.rotation})`);
+            });
+            requestAnimationFrame(animatePlanets);
+        }
+
+        // Start animations
+        animateAsteroids();
+        animatePlanets();
+    </script>
+</body>
+</html>
