@@ -39,43 +39,53 @@
         Speed: <input type="range" id="speedControl" min="0.1" max="5" step="0.1" value="1">
         <button onclick="changeSpeed(0.5)">-</button>
         <button onclick="changeSpeed(1.5)">+</button>
-        <button onclick="zoomIn()">Zoom In</button>
-        <button onclick="zoomOut()">Zoom Out</button>
     </div>
-
-    <svg id="solarSystem" viewBox="-600 -300 1200 600">
-        <!-- Wrap all zoomable content in a group -->
-        <g id="zoomGroup">
+    <svg id="solarSystem" viewBox="-1000 -500 2000 1000">
+        <!-- Wrap all zoomable and draggable content in a group -->
+        <g id="zoomGroup" transform="translate(0, 0)">
             <!-- Sun -->
             <g id="sun">
                 <circle cx="0" cy="0" r="30" fill="#ffd700" filter="url(#glow)"/>
             </g>
-
             <!-- Orbits -->
-            <ellipse id="earthOrbit" rx="150" ry="70" fill="none" stroke="#444" stroke-width="0.5"/>
-            <ellipse id="marsOrbit" rx="220" ry="100" fill="none" stroke="#444" stroke-width="0.5"/>
-            <ellipse id="jupiterOrbit" rx="350" ry="180" fill="none" stroke="#444" stroke-width="0.5"/>
-
-            <!-- Asteroid Belt -->
-            <g id="asteroidBelt">
-                <path d="M-280,0A280,140 0 1 1 280,0" fill="none" stroke="rgba(150,150,150,0.3)" stroke-width="3"/>
-                <g id="asteroidsGroup" style="transform-origin: center">
-                    <!-- Dynamically generated asteroids -->
-                </g>
+            <ellipse id="mercuryOrbit" rx="58" ry="29" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="venusOrbit" rx="108" ry="54" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="earthOrbit" rx="150" ry="75" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="marsOrbit" rx="228" ry="114" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="jupiterOrbit" rx="778" ry="389" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="saturnOrbit" rx="1430" ry="715" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="uranusOrbit" rx="2880" ry="1440" fill="none" stroke="#444" stroke-width="0.5"/>
+            <ellipse id="neptuneOrbit" rx="4500" ry="2250" fill="none" stroke="#444" stroke-width="0.5"/>
+            <!-- Asteroid Belts -->
+            <g id="asteroidBelts">
+                <!-- Dynamically generated asteroid belts and asteroids -->
             </g>
-
             <!-- Planets -->
-            <g id="earth" class="planet" data-info="Mass: 5.97 × 10²⁴ kg<br>Circumference: 40,075 km<br>Composition: Nitrogen, Oxygen">
-                <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/240px-The_Earth_seen_from_Apollo_17.jpg" x="-10" y="-10" width="20" height="20"/>
+            <g id="mercury" class="planet" data-info="Mercury:<br>Radius: 2,440 km<br>Mass: 3.3 × 10²³ kg<br>Composition: Iron-rich core, silicate crust">
+            <image x="-1" y="-1" width="2" height="2" xlink:href="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Mercury_in_color_-_Prockter07-edit1.jpg/800px-Mercury_in_color_-_Prockter07-edit1.jpg" />
             </g>
-            <g id="mars" class="planet" data-info="Mass: 6.39 × 10²³ kg<br>Circumference: 21,344 km<br>Composition: CO₂, Argon">
-                <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/240px-OSIRIS_Mars_true_color.jpg" x="-8" y="-8" width="16" height="16"/>
+            <g id="venus" class="planet" data-info="Venus:<br>Radius: 6,052 km<br>Mass: 4.87 × 10²⁴ kg<br>Composition: Silicate rocks, dense CO₂ atmosphere">
+            <image x="-2.48" y="-2.48" width="4.96" height="4.96" xlink:href="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Venus_globe.jpg/800px-Venus_globe.jpg" />
             </g>
-            <g id="jupiter" class="planet" data-info="Mass: 1.898 × 10²⁷ kg<br>Circumference: 439,264 km<br>Composition: Hydrogen, Helium">
-                <image href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/240px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg" x="-20" y="-20" width="40" height="40"/>
+            <g id="earth" class="planet" data-info="Earth:<br>Radius: 6,371 km<br>Mass: 5.97 × 10²⁴ kg<br>Composition: Nitrogen, Oxygen, silicate rocks">
+            <image x="-2.61" y="-2.61" width="5.22" height="5.22" xlink:href="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/800px-The_Earth_seen_from_Apollo_17.jpg" />
+            </g>
+            <g id="mars" class="planet" data-info="Mars:<br>Radius: 3,390 km<br>Mass: 6.42 × 10²³ kg<br>Composition: Iron oxide surface, CO₂ atmosphere">
+            <image x="-1.39" y="-1.39" width="2.78" height="2.78" xlink:href="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/800px-OSIRIS_Mars_true_color.jpg" />
+            </g>
+            <g id="jupiter" class="planet" data-info="Jupiter:<br>Radius: 69,911 km<br>Mass: 1.9 × 10²⁷ kg<br>Composition: Hydrogen, Helium">
+            <image x="-28.65" y="-28.65" width="57.3" height="57.3" xlink:href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/800px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg" />
+            </g>
+            <g id="saturn" class="planet" data-info="Saturn:<br>Radius: 58,232 km<br>Mass: 5.68 × 10²⁶ kg<br>Composition: Hydrogen, Helium, icy rings">
+            <image x="-23.86" y="-23.86" width="47.72" height="47.72" xlink:href="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/800px-Saturn_during_Equinox.jpg" />
+            </g>
+            <g id="uranus" class="planet" data-info="Uranus:<br>Radius: 25,362 km<br>Mass: 8.68 × 10²⁵ kg<br>Composition: Water, ammonia, methane ice">
+            <image x="-10.39" y="-10.39" width="20.78" height="20.78" xlink:href="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Uranus2.jpg/800px-Uranus2.jpg" />
+            </g>
+            <g id="neptune" class="planet" data-info="Neptune:<br>Radius: 24,622 km<br>Mass: 1.02 × 10²⁶ kg<br>Composition: Methane, water, ammonia ice">
+            <image x="-10.09" y="-10.09" width="20.18" height="20.18" xlink:href="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Neptune_Full.jpg/800px-Neptune_Full.jpg" />
             </g>
         </g>
-
         <!-- Glow filter for Sun -->
         <filter id="glow">
             <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -85,39 +95,27 @@
             </feMerge>
         </filter>
     </svg>
-
     <div id="infoBox" class="info-box"></div>
-
     <script>
         const planets = {
-            earth: {
-                orbit: 150,
-                speed: 11.87,
-                angle: 0,
-                rotation: 0
-            },
-            mars: {
-                orbit: 220,
-                speed: 8.03,
-                angle: 180,
-                rotation: 0
-            },
-            jupiter: {
-                orbit: 350,
-                speed: 1,
-                angle: 90,
-                rotation: 0
-            }
+            mercury: { orbit: 58, speed: 3.65, angle: 0, rotation: 0 }, // Mercury's speed relative to Jupiter
+            venus: { orbit: 108, speed: 2.78, angle: 0, rotation: 0 },  // Venus's speed relative to Jupiter
+            earth: { orbit: 150, speed: 2.28, angle: 0, rotation: 0 },  // Earth's speed relative to Jupiter
+            mars: { orbit: 228, speed: 1.83, angle: 0, rotation: 0 },   // Mars's speed relative to Jupiter
+            jupiter: { orbit: 778, speed: 1, angle: 0, rotation: 0 },   // Jupiter's speed (base = 1)
+            saturn: { orbit: 1430, speed: 0.67, angle: 0, rotation: 0 },// Saturn's speed relative to Jupiter
+            uranus: { orbit: 2880, speed: 0.43, angle: 0, rotation: 0 },// Uranus's speed relative to Jupiter
+            neptune: { orbit: 4500, speed: 0.34, angle: 0, rotation: 0 }// Neptune's speed relative to Jupiter
         };
-
         let speedMultiplier = 1;
         const infoBox = document.getElementById('infoBox');
         const zoomGroup = document.getElementById('zoomGroup');
-
         // Zoom variables
         let zoomLevel = 1; // Initial zoom level
         const zoomStep = 0.1; // Amount to zoom in/out per step
-
+        let isDragging = false;
+        let lastX = 0, lastY = 0;
+        let translateX = 0, translateY = 0;
         // Event listeners for planets
         document.querySelectorAll('.planet').forEach(planet => {
             planet.addEventListener('click', () => {
@@ -125,71 +123,121 @@
                 infoBox.style.display = 'block';
             });
         });
-
         // Speed control
         document.getElementById('speedControl').addEventListener('input', (e) => {
             speedMultiplier = parseFloat(e.target.value);
         });
-
         function changeSpeed(factor) {
             speedMultiplier *= factor;
             document.getElementById('speedControl').value = speedMultiplier;
         }
-
         // Zoom functions
-        function zoomIn() {
-            zoomLevel += zoomStep;
+        function zoom(delta) {
+            if (delta > 0 && zoomLevel < 5) { // Limit zoom in to 5x
+                zoomLevel += zoomStep;
+            } else if (delta < 0 && zoomLevel > 0.2) { // Limit zoom out to 0.2x
+                zoomLevel -= zoomStep;
+            }
             applyZoom();
         }
-
-        function zoomOut() {
-            if (zoomLevel > zoomStep) { // Prevent zooming out too far
-                zoomLevel -= zoomStep;
-                applyZoom();
-            }
-        }
-
         function applyZoom() {
-            zoomGroup.setAttribute('transform', `scale(${zoomLevel})`);
+            zoomGroup.setAttribute('transform', `translate(${translateX},${translateY}) scale(${zoomLevel})`);
         }
+        // Drag mechanics
+        function startDrag(event) {
+            isDragging = true;
+            lastX = event.clientX || event.touches[0].clientX;
+            lastY = event.clientY || event.touches[0].clientY;
+            document.querySelector('svg').style.cursor = 'grabbing';
+        }
+        function drag(event) {
+            if (!isDragging) return;
+            const currentX = event.clientX || event.touches[0].clientX;
+            const currentY = event.clientY || event.touches[0].clientY;
+            translateX += (currentX - lastX) / zoomLevel;
+            translateY += (currentY - lastY) / zoomLevel;
+            lastX = currentX;
+            lastY = currentY;
+            applyZoom();
+        }
+        function stopDrag() {
+            isDragging = false;
+            document.querySelector('svg').style.cursor = 'grab';
+        }
+        // Mouse and touch events
+        document.querySelector('svg').addEventListener('mousedown', startDrag);
+        document.querySelector('svg').addEventListener('mousemove', drag);
+        document.querySelector('svg').addEventListener('mouseup', stopDrag);
+        document.querySelector('svg').addEventListener('mouseleave', stopDrag);
+        document.querySelector('svg').addEventListener('touchstart', startDrag);
+        document.querySelector('svg').addEventListener('touchmove', drag);
+        document.querySelector('svg').addEventListener('touchend', stopDrag);
+        // Wheel zoom
+        document.querySelector('svg').addEventListener('wheel', (event) => {
+            event.preventDefault();
+            zoom(event.deltaY);
+        });
 
-        // Function to generate and animate asteroids
-        const asteroidCount = 50; // Number of asteroids
-        const asteroidBeltRadiusX = 280; // X-axis radius of the ellipse
-        const asteroidBeltRadiusY = 140; // Y-axis radius of the ellipse
-        const asteroidsGroup = document.getElementById('asteroidsGroup');
+        // Generate asteroid belts and individual asteroids
+        const asteroidBeltsGroup = document.getElementById('asteroidBelts');
+        const marsOrbit = 228;
+        const jupiterOrbit = 778;
+        const spacing = 10;
+        const asteroidsPerBelt = 60; // Number of asteroids per belt
 
-        // Generate asteroids
-        for (let i = 0; i < asteroidCount; i++) {
-            const asteroid = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            asteroid.setAttribute('r', Math.random() * 1.5 + 0.5); // Random size between 0.5 and 2
-            asteroid.setAttribute('fill', '#888'); // Gray color
-            asteroid.setAttribute('opacity', Math.random() * 0.4 + 0.2); // Random opacity between 0.2 and 0.6
-            asteroid.setAttribute('data-angle', Math.random() * 360); // Random starting angle
-            asteroid.setAttribute('data-speed', Math.random() * 0.5 + 0.1); // Random speed between 0.1 and 0.6
-            asteroidsGroup.appendChild(asteroid);
+        const asteroids = []; // Array to store asteroid data
+
+        for (let i = 1; i <= Math.floor((jupiterOrbit - 300 - marsOrbit) / spacing); i++) {
+            const radiusX = marsOrbit + 150 + i * spacing;
+            const radiusY = radiusX / 2;
+
+            // Create asteroid belt ellipse
+            const asteroidBelt = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            asteroidBelt.setAttribute('rx', radiusX);
+            asteroidBelt.setAttribute('ry', radiusY);
+            asteroidBelt.setAttribute('fill', 'none');
+            asteroidBelt.setAttribute('stroke', 'rgba(150,150,150,0.3)');
+            asteroidBelt.setAttribute('stroke-width', '1');
+            asteroidBeltsGroup.appendChild(asteroidBelt);
+
+            // Generate individual asteroids for this belt
+            for (let j = 0; j < asteroidsPerBelt; j++) {
+                const asteroid = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                asteroid.setAttribute('r', Math.random() * 1 + 0.5); // Random radius between 0.5 and 1.5
+                asteroid.setAttribute('fill', '#888');
+                asteroid.setAttribute('opacity', Math.random() * 0.4 + 0.2); // Random opacity between 0.2 and 0.6
+                asteroid.setAttribute('data-angle', Math.random() * 360); // Random initial angle
+                asteroid.setAttribute('data-speed', Math.random() * 0.5 + 0.1); // Random angular speed
+                asteroidBeltsGroup.appendChild(asteroid);
+
+                // Store asteroid data for animation
+                asteroids.push({
+                    element: asteroid,
+                    angle: parseFloat(asteroid.getAttribute('data-angle')),
+                    speed: parseFloat(asteroid.getAttribute('data-speed')),
+                    radiusX: radiusX,
+                    radiusY: radiusY
+                });
+            }
         }
 
         // Animate asteroids
         function animateAsteroids() {
-            Array.from(asteroidsGroup.children).forEach(asteroid => {
-                let angle = parseFloat(asteroid.getAttribute('data-angle'));
-                const speed = parseFloat(asteroid.getAttribute('data-speed'));
+            asteroids.forEach(asteroidData => {
+                const { element, angle, speed, radiusX, radiusY } = asteroidData;
 
                 // Update angle
-                angle = (angle + speed * speedMultiplier) % 360;
-                asteroid.setAttribute('data-angle', angle);
+                asteroidData.angle = (angle + speed * speedMultiplier) % 360;
 
                 // Calculate position on ellipse
-                const rad = angle * Math.PI / 180;
-                const x = Math.cos(rad) * asteroidBeltRadiusX;
-                const y = Math.sin(rad) * asteroidBeltRadiusY;
+                const rad = asteroidData.angle * Math.PI / 180;
+                const x = Math.cos(rad) * radiusX;
+                const y = Math.sin(rad) * radiusY;
 
-                // Update position
-                asteroid.setAttribute('cx', x);
-                asteroid.setAttribute('cy', y);
+                // Update asteroid position
+                element.setAttribute('cx', x);
+                element.setAttribute('cy', y);
             });
-
             requestAnimationFrame(animateAsteroids);
         }
 
@@ -197,15 +245,11 @@
         function animatePlanets() {
             Object.entries(planets).forEach(([name, data]) => {
                 const planet = document.getElementById(name);
-                // Orbital motion
                 data.angle = (data.angle - (data.speed * speedMultiplier)) % 360;
                 const rad = data.angle * Math.PI / 180;
                 const x = Math.cos(rad) * data.orbit;
-                const y = Math.sin(rad) * (data.orbit * 0.5); // Elliptical adjustment
-
-                // Axial rotation
+                const y = Math.sin(rad) * (data.orbit * 0.5);
                 data.rotation = (data.rotation + (data.speed * 0.1)) % 360;
-
                 planet.setAttribute('transform',
                     `translate(${x},${y}) rotate(${data.rotation})`);
             });
