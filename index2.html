@@ -243,18 +243,25 @@
 
         // Animate planets
         function animatePlanets() {
-            Object.entries(planets).forEach(([name, data]) => {
-                const planet = document.getElementById(name);
-                data.angle = (data.angle - (data.speed * speedMultiplier)) % 360;
-                const rad = data.angle * Math.PI / 180;
-                const x = Math.cos(rad) * data.orbit;
-                const y = Math.sin(rad) * (data.orbit * 0.5);
-                data.rotation = (data.rotation + (data.speed * 0.1)) % 360;
-                planet.setAttribute('transform',
-                    `translate(${x},${y}) rotate(${data.rotation})`);
-            });
-            requestAnimationFrame(animatePlanets);
-        }
+    		Object.entries(planets).forEach(([name, data]) => {
+        	const planet = document.getElementById(name);
+
+        	// Update angle: Increment for Venus, decrement for others
+        	if (name === 'venus') {
+            		data.angle = (data.angle + (data.speed * speedMultiplier)) % 360; // Counterclockwise motion
+        	} else {
+            		data.angle = (data.angle - (data.speed * speedMultiplier)) % 360; // Clockwise motion
+        	}
+
+        	const rad = data.angle * Math.PI / 180;
+        	const x = Math.cos(rad) * data.orbit;
+        	const y = Math.sin(rad) * (data.orbit * 0.5);
+
+        	// Update planet's position
+        	planet.setAttribute('transform', `translate(${x},${y})`);
+    	});
+    	requestAnimationFrame(animatePlanets);
+}
 
         // Start animations
         animateAsteroids();
